@@ -83,6 +83,48 @@ func getFriend(w http.ResponseWriter, r *http.Request) {
     http.NotFound(w, r)
 }
 
+
+func updateFriend(w http.ResponseWriter, r *http.Request) {
+    w.Header().Set("Content-Type", "application/json")
+    params := mux.Vars(r)
+    friendID := params["id"]
+
+    for index, friend := range Friends {
+        if friend.Id == friendID {
+            var updatedFriend MyFriends
+            err := json.NewDecoder(r.Body).Decode(&updatedFriend)
+            if err != nil {
+                http.Error(w, err.Error(), http.StatusBadRequest)
+                return
+            }
+
+    
+            Friends[index] = updatedFriend
+            json.NewEncoder(w).Encode(updatedFriend)
+            return
+        }
+    }
+
+    http.NotFound(w, r)
+}
+
+
+func deleteFriend(w http.ResponseWriter, r *http.Request) {
+    w.Header().Set("Content-Type", "application/json")
+    params := mux.Vars(r)
+    friendID := params["id"]
+
+    for index, friend := range Friends {
+        if friend.Id == friendID {
+            Friends = append(Friends[:index], Friends[index+1:]...)
+            w.WriteHeader(http.StatusNoContent)
+            return
+        }
+    }
+
+    http.NotFound(w, r)
+}
+
 func serverHome(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("working......")
 	w.Write([]byte("<h1>Server Starting!</h1>"))
@@ -93,9 +135,11 @@ func serverHome(w http.ResponseWriter, r *http.Request) {
 
 func main() {
 	r := mux.NewRouter()
-	r.HandleFunc("/", serverHome).Methods("GET")
+	r.HandleFunc("/", serverHome).Methods("GET");
 	r.HandleFunc("/friends", getAllFriends).Methods("GET")
 	r.HandleFunc("/friends/{id}", getFriend).Methods("GET")
+    r.HandleFunc("/friends/{id}", updateFriend).Methods("PUT")    
+    r.HandleFunc("/friends/{id}", deleteFriend).Methods("DELETE")
 	fmt.Println("Server is listening on port 8080...")
 	http.Handle("/", r)
 	http.ListenAndServe(":8080", nil)

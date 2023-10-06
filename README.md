@@ -8,7 +8,7 @@
 
 - 🤝 I’m looking for help with [Web Devlopment](puskarroy.site)
 
-- 👨‍💻 All of my projects are available at [puskarroy.site](puskarroy.site)
+- 👨‍💻 All of my projects are available at [puskarroy.site](https://puskarroy.site)
 
 - 💬 Ask me about **Web Apps**
 
